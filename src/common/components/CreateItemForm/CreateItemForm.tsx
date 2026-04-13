@@ -1,4 +1,4 @@
-import {type ChangeEvent, type KeyboardEvent, useState} from 'react'
+import { type ChangeEvent, type KeyboardEvent, useState } from 'react'
 import TextField from '@mui/material/TextField'
 import AddBoxIcon from '@mui/icons-material/AddBox'
 import IconButton from '@mui/material/IconButton'
@@ -33,18 +33,20 @@ export const CreateItemForm = ({ onCreateItem }: Props) => {
   }
 
   return (
-      <div>
-        <TextField label={'Enter a title'}
-                   variant={'outlined'}
-                   value={title}
-                   size={'small'}
-                   error={!!error}
-                   helperText={error}
-                   onChange={changeTitleHandler}
-                   onKeyDown={createItemOnEnterHandler}/>
-        <IconButton onClick={createItemHandler} color={'primary'}>
-          <AddBoxIcon />
-        </IconButton>
-      </div>
+    <div>
+      <TextField
+        label={'Enter a title'}
+        variant={'outlined'}
+        value={title}
+        size={'small'}
+        error={!!error}
+        helperText={error}
+        onChange={changeTitleHandler}
+        onKeyDown={createItemOnEnterHandler}
+      />
+      <IconButton onClick={createItemHandler} color={'primary'}>
+        <AddBoxIcon />
+      </IconButton>
+    </div>
   )
 }

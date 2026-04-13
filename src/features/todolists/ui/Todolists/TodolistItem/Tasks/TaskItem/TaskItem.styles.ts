@@ -1,4 +1,4 @@
-import {SxProps} from '@mui/material'
+import { SxProps } from '@mui/material'
 
 export const getListItemSx = (isDone: boolean): SxProps => ({
   p: 0,
