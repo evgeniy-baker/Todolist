@@ -16,7 +16,8 @@ export const AppHttpRequests = () => {
       setTodolists(todolists)
       todolists.forEach((tl) => {
         tasksApi.getTasks(tl.id).then((res) => {
-          setTasks({ ...tasks, [tl.id]: res.data.items })
+          // setTasks({ ...tasks, [tl.id]: res.data.items })
+          setTasks((prevState) => ({ ...prevState, [tl.id]: res.data.items }))
         })
       })
     })
@@ -45,11 +46,16 @@ export const AppHttpRequests = () => {
 
   const createTask = (todolistId: string, title: string) => {
     tasksApi.createTask(todolistId, title).then((res) => {
-      setTasks({ ...tasks, [todolistId]: [res.data.data.item, ...tasks[todolistId]] })
+      const task = res.data.data.item
+      setTasks({ ...tasks, [todolistId]: [task, ...tasks[todolistId]] })
     })
   }
 
-  const deleteTask = (todolistId: string, taskId: string) => {}
+  const deleteTask = (todolistId: string, taskId: string) => {
+    tasksApi.deleteTask(todolistId, taskId).then(() => {
+      setTasks({ ...tasks, [todolistId]: tasks[todolistId].filter((t) => t.id !== taskId) })
+    })
+  }
 
   const changeTaskStatus = (e: ChangeEvent<HTMLInputElement>, task: any) => {}
 

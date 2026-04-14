@@ -12,4 +12,10 @@ export const tasksApi = {
       title,
     })
   },
+  deleteTask<BaseResponse>(todolistId: string, taskId: string) {
+    return instance.delete(`/todo-lists/${todolistId}/tasks/${taskId}`)
+  },
+  changeTaskTitle(todolistId: string, taskId: string) {
+    return instance.put(`/todo-lists/${todolistId}/tasks/${taskId}`)
+  },
 }
