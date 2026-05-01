@@ -12,17 +12,12 @@ export const todolistsSlice = createSlice({
 
   reducers: (create) => {
     return {
-      // fetchTodolistsAC: create.reducer<{ todolists: Todolist[] }>((_state, action) => {
-      //   return action.payload.todolists.map((todolist) => {
-      //     return { ...todolist, filter: 'all' }
-      //   })
+      // deleteTodolistAC: create.reducer<{ id: string }>((state, action) => {
+      //   const index = state.findIndex((todolist) => todolist.id === action.payload.id)
+      //   if (index !== -1) {
+      //     state.splice(index, 1)
+      //   }
       // }),
-      deleteTodolistAC: create.reducer<{ id: string }>((state, action) => {
-        const index = state.findIndex((todolist) => todolist.id === action.payload.id)
-        if (index !== -1) {
-          state.splice(index, 1)
-        }
-      }),
       changeTodolistTitleAC: create.reducer<{ id: string; title: string }>((state, action) => {
         const index = state.findIndex((todolist) => todolist.id === action.payload.id)
         if (index !== -1) {
@@ -62,8 +57,27 @@ export const todolistsSlice = createSlice({
           state[index].title = action.payload.title
         }
       })
+
+      .addCase(deleteTodolistTC.fulfilled, (state, action) => {
+        const index = state.findIndex((todolist) => todolist.id === action.payload.id)
+        if (index !== -1) {
+          state.splice(index, 1)
+        }
+      })
   },
 })
+
+export const deleteTodolistTC = createAsyncThunk(
+  `${todolistsSlice.name}/deleteTodolistTitleTC`,
+  async (id: string, { rejectWithValue }) => {
+    try {
+      await todolistsApi.deleteTodolist(id)
+      return { id }
+    } catch (error) {
+      return rejectWithValue(error)
+    }
+  },
+)
 
 export const changeTodolistTitleTC = createAsyncThunk(
   `${todolistsSlice.name}/changeTodolistTitleTC`,
@@ -91,7 +105,7 @@ export const fetchTodolistsTC = createAsyncThunk(
 
 export const todolistsReducer = todolistsSlice.reducer
 export const {
-  deleteTodolistAC,
+  // deleteTodolistAC,
   // changeTodolistTitleAC,
   changeTodolistFilterAC,
   createTodolistAC,
