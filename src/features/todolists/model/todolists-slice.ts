@@ -1,29 +1,19 @@
-import { createAsyncThunk, createSlice, nanoid } from '@reduxjs/toolkit'
+import { createAsyncThunk, nanoid } from '@reduxjs/toolkit'
 import { Todolist } from '@/features/todolists/api/todolistsApi.types.ts'
 import { todolistsApi } from '@/features/todolists/api/todolistsApi.ts'
+import { createAppSlice } from '@/app/createAppSlice.ts'
 
 export type DomainTodolist = Todolist & { filter: FilterValues }
 
 export type FilterValues = 'all' | 'active' | 'completed'
 
-export const todolistsSlice = createSlice({
+export const todolistsSlice = createAppSlice({
   name: 'todolists',
   initialState: [] as DomainTodolist[],
 
   reducers: (create) => {
     return {
-      // deleteTodolistAC: create.reducer<{ id: string }>((state, action) => {
-      //   const index = state.findIndex((todolist) => todolist.id === action.payload.id)
-      //   if (index !== -1) {
-      //     state.splice(index, 1)
-      //   }
-      // }),
-      changeTodolistTitleAC: create.reducer<{ id: string; title: string }>((state, action) => {
-        const index = state.findIndex((todolist) => todolist.id === action.payload.id)
-        if (index !== -1) {
-          state[index].title = action.payload.title
-        }
-      }),
+      // action creators
       changeTodolistFilterAC: create.reducer<{ id: string; filter: FilterValues }>(
         (state, action) => {
           const todolist = state.find((todolist) => todolist.id === action.payload.id)
@@ -32,24 +22,35 @@ export const todolistsSlice = createSlice({
           }
         },
       ),
-      // createTodolistAC: create.preparedReducer(
-      //   (title: string) => {
-      //     return { payload: { id: nanoid(), title, filter: 'all' } as DomainTodolist }
-      //   },
-      //   (state, action) => {
-      //     state.push(action.payload)
-      //   },
-      // ),
+
+      // thunk creators
+      fetchTodolistsTC: create.asyncThunk(
+        async (_arg, { rejectWithValue }) => {
+          try {
+            const res = await todolistsApi.getTodolists()
+            return { todolists: res.data }
+          } catch (error) {
+            return rejectWithValue(error)
+          }
+        },
+        {
+          fulfilled: (state, action) => {
+            return action.payload.todolists.map((todolist) => {
+              return { ...todolist, filter: 'all' }
+            })
+          },
+        },
+      ),
     }
   },
 
   extraReducers: (builder) => {
     builder
-      .addCase(fetchTodolistsTC.fulfilled, (state, action) => {
-        return action.payload.todolists.map((todolist) => {
-          return { ...todolist, filter: 'all' }
-        })
-      })
+      // .addCase(fetchTodolistsTC.fulfilled, (state, action) => {
+      //   return action.payload.todolists.map((todolist) => {
+      //     return { ...todolist, filter: 'all' }
+      //   })
+      // })
 
       .addCase(changeTodolistTitleTC.fulfilled, (state, action) => {
         const index = state.findIndex((todolist) => todolist.id === action.payload.id)
@@ -112,23 +113,17 @@ export const changeTodolistTitleTC = createAsyncThunk(
   },
 )
 
-export const fetchTodolistsTC = createAsyncThunk(
-  `${todolistsSlice.name}/fetchTodolistsTC`,
-  async (_arg, { rejectWithValue }) => {
-    try {
-      const res = await todolistsApi.getTodolists()
-      return { todolists: res.data }
-    } catch (error) {
-      return rejectWithValue(error)
-    }
-  },
-)
+// export const fetchTodolistsTC = createAsyncThunk(
+//   `${todolistsSlice.name}/fetchTodolistsTC`,
+//   async (_arg, { rejectWithValue }) => {
+//     try {
+//       const res = await todolistsApi.getTodolists()
+//       return { todolists: res.data }
+//     } catch (error) {
+//       return rejectWithValue(error)
+//     }
+//   },
+// )
 
 export const todolistsReducer = todolistsSlice.reducer
-export const {
-  // deleteTodolistAC,
-  // changeTodolistTitleAC,
-  changeTodolistFilterAC,
-  // createTodolistAC,
-  // fetchTodolistsAC,
-} = todolistsSlice.actions
+export const { changeTodolistFilterAC, fetchTodolistsTC } = todolistsSlice.actions
