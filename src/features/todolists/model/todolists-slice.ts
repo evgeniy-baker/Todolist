@@ -2,9 +2,9 @@ import { createAsyncThunk, nanoid } from '@reduxjs/toolkit'
 import { Todolist } from '@/features/todolists/api/todolistsApi.types.ts'
 import { todolistsApi } from '@/features/todolists/api/todolistsApi.ts'
 import { createAppSlice } from '@/app/createAppSlice.ts'
+import { changeStatusAC } from '@/app/app-slice.ts'
 
 export type DomainTodolist = Todolist & { filter: FilterValues }
-
 export type FilterValues = 'all' | 'active' | 'completed'
 
 export const todolistsSlice = createAppSlice({
@@ -25,12 +25,16 @@ export const todolistsSlice = createAppSlice({
 
       // thunk creators
       fetchTodolistsTC: create.asyncThunk(
-        async (_arg, { rejectWithValue }) => {
+        async (_arg, { rejectWithValue, dispatch }) => {
+          dispatch(changeStatusAC({ status: 'loading' }))
+
           try {
             const res = await todolistsApi.getTodolists()
             return { todolists: res.data }
           } catch (error) {
             return rejectWithValue(error)
+          } finally {
+            dispatch(changeStatusAC({ status: 'succeeded' }))
           }
         },
         {
@@ -46,11 +50,6 @@ export const todolistsSlice = createAppSlice({
 
   extraReducers: (builder) => {
     builder
-      // .addCase(fetchTodolistsTC.fulfilled, (state, action) => {
-      //   return action.payload.todolists.map((todolist) => {
-      //     return { ...todolist, filter: 'all' }
-      //   })
-      // })
 
       .addCase(changeTodolistTitleTC.fulfilled, (state, action) => {
         const index = state.findIndex((todolist) => todolist.id === action.payload.id)
