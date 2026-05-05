@@ -1,10 +1,6 @@
 import { EditableSpan } from '@/common/components/EditableSpan/EditableSpan'
 import { useAppDispatch } from '@/common/hooks'
-import {
-  changeTaskStatusTC,
-  changeTaskTitleAC,
-  deleteTaskTC,
-} from '@/features/todolists/model/tasks-slice.ts'
+import { updateTaskTC, deleteTaskTC } from '@/features/todolists/model/tasks-slice.ts'
 import DeleteIcon from '@mui/icons-material/Delete'
 import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
@@ -28,11 +24,12 @@ export const TaskItem = ({ task, todolistId }: Props) => {
   const changeTaskStatus = (e: ChangeEvent<HTMLInputElement>) => {
     const status = e.currentTarget.checked ? TaskStatus.Completed : TaskStatus.New
     const newTask = { ...task, status }
-    dispatch(changeTaskStatusTC(newTask))
+    dispatch(updateTaskTC(newTask))
   }
 
   const changeTaskTitle = (title: string) => {
-    dispatch(changeTaskTitleAC({ todolistId, taskId: task.id, title }))
+    const newTask = { ...task, title }
+    dispatch(updateTaskTC(newTask))
   }
 
   return (

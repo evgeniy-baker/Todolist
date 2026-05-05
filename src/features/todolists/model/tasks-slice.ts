@@ -16,34 +16,6 @@ export const tasksSlice = createAppSlice({
   initialState: {} as TasksState,
   reducers: (create) => {
     return {
-      // action creators
-
-      changeTaskStatusAC: create.reducer<{
-        todolistId: string
-        taskId: string
-        status: TaskStatus
-      }>((state, action) => {
-        const task = state[action.payload.todolistId].find(
-          (task) => task.id === action.payload.taskId,
-        )
-        if (task) {
-          task.status = action.payload.status
-        }
-      }),
-
-      changeTaskTitleAC: create.reducer<{
-        todolistId: string
-        taskId: string
-        title: string
-      }>((state, action) => {
-        const task = state[action.payload.todolistId].find(
-          (task) => task.id === action.payload.taskId,
-        )
-        if (task) {
-          task.title = action.payload.title
-        }
-      }),
-
       // thunk creators
       fetchTasksTC: create.asyncThunk(
         async (todolistId: string, { rejectWithValue, dispatch }) => {
@@ -109,7 +81,7 @@ export const tasksSlice = createAppSlice({
         },
       ),
 
-      changeTaskStatusTC: create.asyncThunk(
+      updateTaskTC: create.asyncThunk(
         async (task: DomainTask, { rejectWithValue, dispatch }) => {
           dispatch(changeStatusAC({ status: 'loading' }))
 
@@ -136,12 +108,12 @@ export const tasksSlice = createAppSlice({
         },
         {
           fulfilled: (state, action) => {
-            debugger
             const task = state[action.payload.task.todoListId].find(
               (task) => task.id === action.payload.task.id,
             )
             if (task) {
               task.status = action.payload.task.status
+              task.title = action.payload.task.title
             }
           },
         },
@@ -161,5 +133,4 @@ export const tasksSlice = createAppSlice({
 })
 
 export const tasksReducer = tasksSlice.reducer
-export const { changeTaskTitleAC, fetchTasksTC, createTaskTC, deleteTaskTC, changeTaskStatusTC } =
-  tasksSlice.actions
+export const { fetchTasksTC, createTaskTC, deleteTaskTC, updateTaskTC } = tasksSlice.actions
