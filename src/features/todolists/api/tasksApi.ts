@@ -11,10 +11,11 @@ export const tasksApi = {
     return instance.get<GetTasksResponse>(`/todo-lists/${todolistId}/tasks`)
   },
 
-  createTask(todolistId: string, title: string) {
-    return instance.post<BaseResponse<{ item: DomainTask }>>(`/todo-lists/${todolistId}/tasks`, {
-      title,
-    })
+  createTask(payload: { todolistId: string; title: string }) {
+    return instance.post<BaseResponse<{ item: DomainTask }>>(
+      `/todo-lists/${payload.todolistId}/tasks`,
+      payload,
+    )
   },
 
   deleteTask(payload: { todolistId: string; taskId: string }) {

@@ -1,10 +1,9 @@
 import { useAppDispatch, useAppSelector } from '@/common/hooks'
-import { selectTasks } from '@/features/todolists/model/tasks-selectors'
 import type { DomainTodolist } from '@/features/todolists/model/todolists-slice.ts'
 import { TaskItem } from './TaskItem/TaskItem'
 import List from '@mui/material/List'
 import { useEffect } from 'react'
-import { fetchTasksTC } from '@/features/todolists/model/tasks-slice.ts'
+import { fetchTasksTC, selectTasks } from '@/features/todolists/model/tasks-slice.ts'
 import { TaskStatus } from '@/features/todolists/api/tasksApi.types.ts'
 
 type Props = {
