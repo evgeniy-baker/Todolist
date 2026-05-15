@@ -1,8 +1,9 @@
 import { todolistsApi } from '@/features/todolists/api/todolistsApi'
 import type { Todolist } from '@/features/todolists/api/todolistsApi.types'
 import { createAppSlice } from '@/app/createAppSlice.ts'
-import { changeStatusAC } from '@/app/app-slice.ts'
+import { changeStatusAC, setErrorAC } from '@/app/app-slice.ts'
 import { RequestStatus } from '@/common/types'
+import { ResultCode } from '@/common/enums'
 
 export const todolistsSlice = createAppSlice({
   name: 'todolists',
@@ -31,15 +32,29 @@ export const todolistsSlice = createAppSlice({
         },
       },
     ),
+
     createTodolistTC: create.asyncThunk(
       async (title: string, { dispatch, rejectWithValue }) => {
         try {
           dispatch(changeStatusAC({ status: 'loading' }))
           const res = await todolistsApi.createTodolist(title)
-          dispatch(changeStatusAC({ status: 'succeeded' }))
-          return { todolist: res.data.data.item }
+
+          if (res.data.resultCode === ResultCode.Success) {
+            dispatch(changeStatusAC({ status: 'succeeded' }))
+            return { todolist: res.data.data.item }
+          } else {
+            dispatch(changeStatusAC({ status: 'failed' }))
+
+            const errorMessage = res.data.messages.length
+              ? res.data.messages[0]
+              : 'Произошла ошибка'
+
+            dispatch(setErrorAC({ error: errorMessage }))
+            return rejectWithValue(null)
+          }
         } catch (error) {
           dispatch(changeStatusAC({ status: 'failed' }))
+          dispatch(setErrorAC({ error: error.response.data.message || error.message }))
           return rejectWithValue(null)
         }
       },
