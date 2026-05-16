@@ -1,25 +1,24 @@
-import { type ChangeEvent, type KeyboardEvent, useState } from 'react'
-import TextField from '@mui/material/TextField'
-import AddBoxIcon from '@mui/icons-material/AddBox'
-import IconButton from '@mui/material/IconButton'
-import { RequestStatus } from '@/common/types'
+import { type ChangeEvent, type KeyboardEvent, useState } from "react"
+import TextField from "@mui/material/TextField"
+import AddBoxIcon from "@mui/icons-material/AddBox"
+import IconButton from "@mui/material/IconButton"
 
 type Props = {
   onCreateItem: (title: string) => void
-  entityStatus?: RequestStatus
+  disabled?: boolean
 }
 
-export const CreateItemForm = ({ onCreateItem, entityStatus }: Props) => {
-  const [title, setTitle] = useState('')
+export const CreateItemForm = ({ onCreateItem, disabled }: Props) => {
+  const [title, setTitle] = useState("")
   const [error, setError] = useState<string | null>(null)
 
   const createItemHandler = () => {
     const trimmedTitle = title.trim()
-    if (trimmedTitle !== '') {
+    if (trimmedTitle !== "") {
       onCreateItem(trimmedTitle)
-      setTitle('')
+      setTitle("")
     } else {
-      setError('Title is required')
+      setError("Title is required")
     }
   }
 
@@ -29,7 +28,7 @@ export const CreateItemForm = ({ onCreateItem, entityStatus }: Props) => {
   }
 
   const createItemOnEnterHandler = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       createItemHandler()
     }
   }
@@ -37,21 +36,17 @@ export const CreateItemForm = ({ onCreateItem, entityStatus }: Props) => {
   return (
     <div>
       <TextField
-        label={'Enter a title'}
-        variant={'outlined'}
+        label={"Enter a title"}
+        variant={"outlined"}
         value={title}
-        size={'small'}
+        size={"small"}
         error={!!error}
         helperText={error}
         onChange={changeTitleHandler}
         onKeyDown={createItemOnEnterHandler}
-        disabled={entityStatus === 'loading'}
+        disabled={disabled}
       />
-      <IconButton
-        onClick={createItemHandler}
-        color={'primary'}
-        disabled={entityStatus === 'loading'}
-      >
+      <IconButton onClick={createItemHandler} color={"primary"} disabled={disabled}>
         <AddBoxIcon />
       </IconButton>
     </div>

@@ -1,35 +1,33 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { RequestStatus } from '@/common/types'
-
-export type ThemeMode = 'dark' | 'light'
+import type { RequestStatus } from "@/common/types"
+import { createSlice } from "@reduxjs/toolkit"
 
 export const appSlice = createSlice({
-  name: 'app',
+  name: "app",
   initialState: {
-    themeMode: 'light' as ThemeMode,
-    status: 'idle' as RequestStatus,
+    themeMode: "light" as ThemeMode,
+    status: "idle" as RequestStatus,
     error: null as string | null,
   },
   selectors: {
     selectThemeMode: (state) => state.themeMode,
-    selectStatus: (state) => state.status,
-    selectError: (state) => state.error,
+    selectAppStatus: (state) => state.status,
+    selectAppError: (state) => state.error,
   },
-  reducers: (create) => {
-    return {
-      changeThemeModeAC: create.reducer<{ themeMode: ThemeMode }>((state, action) => {
-        state.themeMode = action.payload.themeMode
-      }),
-      changeStatusAC: create.reducer<{ status: RequestStatus }>((state, action) => {
-        state.status = action.payload.status
-      }),
-      setErrorAC: create.reducer<{ error: string | null }>((state, action) => {
-        state.error = action.payload.error
-      }),
-    }
-  },
+  reducers: (create) => ({
+    changeThemeModeAC: create.reducer<{ themeMode: ThemeMode }>((state, action) => {
+      state.themeMode = action.payload.themeMode
+    }),
+    setAppStatusAC: create.reducer<{ status: RequestStatus }>((state, action) => {
+      state.status = action.payload.status
+    }),
+    setAppErrorAC: create.reducer<{ error: string | null }>((state, action) => {
+      state.error = action.payload.error
+    }),
+  }),
 })
 
+export const { selectThemeMode, selectAppStatus, selectAppError } = appSlice.selectors
+export const { changeThemeModeAC, setAppStatusAC, setAppErrorAC } = appSlice.actions
 export const appReducer = appSlice.reducer
-export const { changeThemeModeAC, changeStatusAC, setErrorAC } = appSlice.actions
-export const { selectThemeMode, selectStatus, selectError } = appSlice.selectors
+
+export type ThemeMode = "dark" | "light"
