@@ -3,8 +3,10 @@ import type { RootState } from '@/app/model/store.ts'
 import { ResultCode } from '@/common/enums'
 import { createAppSlice, handleServerAppError, handleServerNetworkError } from '@/common/utils'
 import { tasksApi } from '@/features/todolists/api/tasksApi'
-import type { DomainTask, UpdateTaskModel } from '@/features/todolists/api/tasksApi.types'
+import type { UpdateTaskModel } from '@/features/todolists/api/tasksApi.types'
 import { createTodolistTC, deleteTodolistTC } from './todolists-slice'
+import { DomainTaskSchema } from '@/features/todolists/model/schemas.ts'
+import { DomainTask } from '@/features/todolists/model/types.ts'
 
 export const tasksSlice = createAppSlice({
   name: 'tasks',
@@ -27,6 +29,8 @@ export const tasksSlice = createAppSlice({
         try {
           dispatch(setAppStatusAC({ status: 'loading' }))
           const res = await tasksApi.getTasks(todolistId)
+          DomainTaskSchema.array().parse(res.data.items) // ZOD Валидация
+
           dispatch(setAppStatusAC({ status: 'succeeded' }))
           return { todolistId, tasks: res.data.items }
         } catch (error) {

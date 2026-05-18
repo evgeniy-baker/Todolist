@@ -1,17 +1,5 @@
-import type { TaskPriority, TaskStatus } from "@/common/enums/enums"
-
-export type DomainTask = {
-  description: string
-  title: string
-  status: TaskStatus
-  priority: TaskPriority
-  startDate: string
-  deadline: string
-  id: string
-  todoListId: string
-  order: number
-  addedDate: string
-}
+import { TaskPriority, TaskStatus } from '@/common/enums'
+import { DomainTask } from '@/features/todolists/model/types.ts'
 
 export type GetTasksResponse = {
   error: string | null
