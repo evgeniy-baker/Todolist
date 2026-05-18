@@ -11,5 +11,5 @@ export const DomainTaskSchema = z.object({
   id: z.string(),
   todoListId: z.string(),
   order: z.number().int(),
-  addedDate: z.string(),
+  addedDate: z.iso.datetime({ local: true }),
 })
