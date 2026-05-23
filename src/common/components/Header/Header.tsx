@@ -12,7 +12,7 @@ import Toolbar from '@mui/material/Toolbar'
 import LinearProgress from '@mui/material/LinearProgress'
 import { logoutTC, selectIsLoggedIn } from '@/features/auth/model/auth-slice.ts'
 import { Path } from '@/common/routing'
-import { useNavigate } from 'react-router'
+import { NavLink, useNavigate } from 'react-router'
 
 export const Header = () => {
   const isLoggedIn = useAppSelector(selectIsLoggedIn)
@@ -45,6 +45,8 @@ export const Header = () => {
             <MenuIcon />
           </IconButton>
           <div>
+            <NavLink to={Path.Main}>Todolists</NavLink>
+            <NavLink to={Path.Faq}>FAQ</NavLink>
             {isLoggedIn && <NavButton onClick={logoutHandler}>Logout</NavButton>}
             <NavButton background={theme.palette.primary.dark}>Faq</NavButton>
             <Switch color={'default'} onChange={changeMode} />

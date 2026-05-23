@@ -13,11 +13,12 @@ import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form'
 import styles from './Login.module.css'
-import { loginTC } from '@/features/auth/model/auth-slice.ts'
-import { useNavigate } from 'react-router'
+import { loginTC, selectIsLoggedIn } from '@/features/auth/model/auth-slice.ts'
+import { Navigate, useNavigate } from 'react-router'
 import { Path } from '@/common/routing'
 
 export const Login = () => {
+  const isLoggedIn = useAppSelector(selectIsLoggedIn)
   const themeMode = useAppSelector(selectThemeMode)
   const theme = getTheme(themeMode)
 
@@ -43,9 +44,9 @@ export const Login = () => {
       })
   }
 
-  // if (isLoggedIn) {
-  //   return <Navigate to={Path.Main} />
-  // }
+  if (isLoggedIn) {
+    return <Navigate to={Path.Main} />
+  }
 
   return (
     <Grid container justifyContent={'center'}>
