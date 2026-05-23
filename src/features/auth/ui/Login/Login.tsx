@@ -13,18 +13,15 @@ import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form'
 import styles from './Login.module.css'
-import { loginTC, selectIsLoggedIn } from '@/features/auth/model/auth-slice.ts'
-import { Navigate, useNavigate } from 'react-router'
-import { Main } from '@/app/Main.tsx'
+import { loginTC } from '@/features/auth/model/auth-slice.ts'
+import { useNavigate } from 'react-router'
 import { Path } from '@/common/routing'
 
 export const Login = () => {
   const themeMode = useAppSelector(selectThemeMode)
-  const isLoggedIn = useAppSelector(selectIsLoggedIn)
-  const dispatch = useAppDispatch()
-
   const theme = getTheme(themeMode)
 
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
   const {
