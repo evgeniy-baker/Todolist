@@ -3,6 +3,7 @@ import { createAppSlice, handleServerAppError, handleServerNetworkError } from '
 import { authApi } from '@/features/auth/api/authApi.ts'
 import { setAppStatusAC } from '@/app/app-slice.ts'
 import { ResultCode } from '@/common/enums'
+import { clearDataAC } from '@/common/actions'
 
 export const authSlice = createAppSlice({
   name: 'auth',
@@ -47,6 +48,7 @@ export const authSlice = createAppSlice({
           if (res.data.resultCode === ResultCode.Success) {
             localStorage.removeItem('token')
             dispatch(setAppStatusAC({ status: 'succeeded' }))
+            dispatch(clearDataAC())
             return { isLoggedIn: false }
           } else {
             handleServerAppError(res.data, dispatch)
@@ -71,6 +73,8 @@ export const authSlice = createAppSlice({
           const res = await authApi.me()
           if (res.data.resultCode === ResultCode.Success) {
             dispatch(setAppStatusAC({ status: 'succeeded' }))
+            const login = res.data.data.login
+            localStorage.setItem('login', login)
             return { isLoggedIn: true }
           } else {
             handleServerAppError(res.data, dispatch)

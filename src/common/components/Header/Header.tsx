@@ -45,9 +45,18 @@ export const Header = () => {
             <MenuIcon />
           </IconButton>
           <div>
-            <NavLink to={Path.Main}>Todolists</NavLink>
-            <NavLink to={Path.Faq}>FAQ</NavLink>
-            {isLoggedIn && <NavButton onClick={logoutHandler}>Logout</NavButton>}
+            <NavLink to={Path.Main} style={{ margin: '10px', color: 'white' }}>
+              Todolists
+            </NavLink>
+            <NavLink to={Path.Faq} style={{ margin: '10px', color: 'white' }}>
+              FAQ
+            </NavLink>
+            {isLoggedIn && (
+              <span>
+                <p style={{ display: 'inline', margin: '10px' }}>{localStorage.getItem('login')}</p>
+                <NavButton onClick={logoutHandler}>Logout</NavButton>
+              </span>
+            )}
             <NavButton background={theme.palette.primary.dark}>Faq</NavButton>
             <Switch color={'default'} onChange={changeMode} />
           </div>

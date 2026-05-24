@@ -11,6 +11,5 @@ export const ProtectedRoute = ({ children, isAllowed, redirectPath }: Props) => 
   if (isAllowed) {
     return <Navigate to={redirectPath} />
   }
-
-  return <Outlet />
+  return children || <Outlet />
 }
