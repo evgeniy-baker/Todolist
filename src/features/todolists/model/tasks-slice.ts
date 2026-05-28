@@ -25,7 +25,7 @@ export const tasksSlice = createAppSlice({
       .addCase(deleteTodolistTC.fulfilled, (state, action) => {
         delete state[action.payload.id]
       })
-      .addCase(clearDataAC, (state, action) => {
+      .addCase(clearDataAC, () => {
         return {}
       })
   },
