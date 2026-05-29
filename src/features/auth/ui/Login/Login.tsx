@@ -1,4 +1,4 @@
-import { selectThemeMode } from '@/app/app-slice'
+import { selectThemeMode, setIsLoggedInAC } from '@/app/app-slice'
 import { useAppDispatch, useAppSelector } from '@/common/hooks'
 import { getTheme } from '@/common/theme'
 import { type LoginInputs, loginSchema } from '@/features/auth/lib/schemas'
@@ -13,17 +13,16 @@ import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form'
 import styles from './Login.module.css'
-import { loginTC, selectIsLoggedIn } from '@/features/auth/model/auth-slice.ts'
-import { Navigate, useNavigate } from 'react-router'
-import { Path } from '@/common/routing'
+import { useLoginMutation } from '@/features/auth/api/authApi.ts'
+import { ResultCode } from '@/common/enums'
 
 export const Login = () => {
-  const isLoggedIn = useAppSelector(selectIsLoggedIn)
+  const [login] = useLoginMutation()
+
   const themeMode = useAppSelector(selectThemeMode)
   const theme = getTheme(themeMode)
 
   const dispatch = useAppDispatch()
-  const navigate = useNavigate()
 
   const {
     register,
@@ -37,15 +36,16 @@ export const Login = () => {
   })
 
   const onSubmit: SubmitHandler<LoginInputs> = (data) => {
-    dispatch(loginTC(data))
+    login(data)
       .unwrap()
-      .then(() => {
-        navigate(Path.Main)
+      .then((data) => {
+        if (data.resultCode === ResultCode.Success) {
+          const token = data.data.token
+          localStorage.setItem('token', token)
+          dispatch(setIsLoggedInAC({ isLoggedIn: true }))
+          reset()
+        }
       })
-  }
-
-  if (isLoggedIn) {
-    return <Navigate to={Path.Main} />
   }
 
   return (
