@@ -43,6 +43,25 @@ export const tasksApi = baseApi.injectEndpoints({
       invalidatesTags: (_result, _error, { todolistId }) => {
         return [{ type: 'Task', id: todolistId }]
       },
+      onQueryStarted: async ({ todolistId, taskId }, { dispatch, queryFulfilled }) => {
+        // <- Optimistic update
+        const patchResult = dispatch(
+          tasksApi.util.updateQueryData(
+            'getTasks',
+            { id: todolistId, params: { page: 1 } },
+            (state) => {
+              const index = state.items.findIndex((task) => task.id === taskId)
+              if (index !== -1) state.items.splice(index, 1)
+            },
+          ),
+        )
+
+        try {
+          await queryFulfilled
+        } catch (error) {
+          patchResult.undo()
+        }
+      },
     }),
 
     //
@@ -59,6 +78,28 @@ export const tasksApi = baseApi.injectEndpoints({
       // invalidatesTags: ['Task'],
       invalidatesTags: (_result, _error, { todolistId }) => {
         return [{ type: 'Task', id: todolistId }]
+      },
+
+      onQueryStarted: async ({ todolistId, taskId, model }, { dispatch, queryFulfilled }) => {
+        // <- Optimistic update
+        const patchResult = dispatch(
+          tasksApi.util.updateQueryData(
+            'getTasks',
+            { id: todolistId, params: { page: 1 } },
+            (state) => {
+              const index = state.items.findIndex((task) => task.id === taskId)
+              if (index !== -1) {
+                state.items[index] = { ...state.items[index], ...model }
+              }
+            },
+          ),
+        )
+
+        try {
+          await queryFulfilled
+        } catch (error) {
+          patchResult.undo()
+        }
       },
     }),
   }),
