@@ -1,8 +1,8 @@
-import Pagination from '@mui/material/Pagination'
 import Typography from '@mui/material/Typography'
 import { ChangeEvent } from 'react'
 import styles from './TasksPagination.module.css'
 import { PAGE_COUNT } from '@/common/constants'
+import { Pagination } from '@mui/material'
 
 type Props = {
   totalCount: number
