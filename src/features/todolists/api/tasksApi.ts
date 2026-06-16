@@ -75,30 +75,44 @@ export const tasksApi = baseApi.injectEndpoints({
         method: 'PUT',
         body: model,
       }),
+
       // invalidatesTags: ['Task'],
       invalidatesTags: (_result, _error, { todolistId }) => {
         return [{ type: 'Task', id: todolistId }]
       },
 
-      onQueryStarted: async ({ todolistId, taskId, model }, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async (
+        { todolistId, taskId, model },
+        { dispatch, queryFulfilled, getState },
+      ) => {
         // <- Optimistic update
-        const patchResult = dispatch(
-          tasksApi.util.updateQueryData(
-            'getTasks',
-            { id: todolistId, params: { page: 1 } },
-            (state) => {
-              const index = state.items.findIndex((task) => task.id === taskId)
-              if (index !== -1) {
-                state.items[index] = { ...state.items[index], ...model }
-              }
-            },
-          ),
-        )
+        const arg = tasksApi.util.selectCachedArgsForQuery(getState(), 'getTasks')
+
+        const patchResults: any[] = []
+
+        arg.forEach((arg) => {
+          patchResults.push(
+            dispatch(
+              tasksApi.util.updateQueryData(
+                'getTasks',
+                { id: todolistId, params: { page: arg.params.page } },
+                (state) => {
+                  const index = state.items.findIndex((task) => task.id === taskId)
+                  if (index !== -1) {
+                    state.items[index] = { ...state.items[index], ...model }
+                  }
+                },
+              ),
+            ),
+          )
+        })
 
         try {
           await queryFulfilled
         } catch (error) {
-          patchResult.undo()
+          patchResults.forEach((patchResult) => {
+            patchResult.undo()
+          })
         }
       },
     }),
